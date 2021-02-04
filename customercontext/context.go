@@ -1,13 +1,19 @@
 package customercontext
 
 import (
+	"fmt"
+	"os"
+
+	"github.com/joho/godotenv"
 	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
 )
 
 //ConnectDB connection utils to db
 func ConnectDB() (*gorm.DB, error) {
-	connString := "sqlserver://sa:Sa123456@localhost:1433?database=goDB"
+	godotenv.Load()
+	connString := os.Getenv("DATABASE_URL")
+	fmt.Println(connString)
 	db, err := gorm.Open(sqlserver.Open(connString), &gorm.Config{})
 	if err != nil {
 		return nil, err

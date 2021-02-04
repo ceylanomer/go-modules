@@ -1,0 +1,42 @@
+# Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
+
+version: '3'
+
+# Define services
+services:
+
+  # App Service
+  app:
+    # Configuration for building the docker image for the service
+    build:
+      context: . # Use an image built from the specified dockerfile in the current directory.
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8081" # Forward the exposed port 8080 on the container to port 8081 on the host machine
+    restart: unless-stopped
+    links: 
+      - goDB # This service depends on redis. Start that first.
+    environment: # Pass environment variables to the service
+      DATABASE_URL: "sqlserver://sa:Sa123456@goDB?database=goDB"    
+    networks: # Networks to join (Services on the same network can communicate with each other using their name)
+      - backend
+
+  # MS SQL  
+  goDB:
+    container_name: goDB
+    image: mcr.microsoft.com/mssql/server
+    ports:
+      - "1433:1433"
+    restart: unless-stopped
+    environment:
+      SA_PASSWORD: "Sa123456"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - ./sqlserver-data1:/var/lib/sqlserver/data
+    networks: # Networks to join (Services on the same network can communicate with each other using their name)
+      - backend
+
+# Networks to be created to facilitate communication between containers
+networks:
+  backend:
+    driver: "bridge"
