@@ -17,7 +17,8 @@ services:
     links: 
       - goDB # This service depends on redis. Start that first.
     environment: # Pass environment variables to the service
-      DATABASE_URL: "sqlserver://sa:Sa123456@goDB?database=goDB"    
+      DATABASE_URL: "sqlserver://sa:Sa123456@goDB?database=goDB"
+      SERVER_URL: "sqlserver://sa:Sa123456@goDB/" 
     networks: # Networks to join (Services on the same network can communicate with each other using their name)
       - backend
 

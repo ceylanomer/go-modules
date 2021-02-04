@@ -13,14 +13,19 @@ import (
 )
 
 func main() {
-
-	db, err := customercontext.ConnectDB()
-	if err != nil {
-		fmt.Println(err)
+	str, err2 := customercontext.CreateDBIfNotExist()
+	if err2 == nil {
+		fmt.Println(str)
+		db, err := customercontext.ConnectDB()
+		if err != nil {
+			fmt.Println(err)
+		}
+		MigrateDB(db)
+		InitializeDB(db)
+		StartAPI()
+	} else {
+		fmt.Println(str + err2.Error())
 	}
-	MigrateDB(db)
-	InitializeDB(db)
-	StartAPI()
 }
 
 //MigrateDB migrates db
